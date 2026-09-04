@@ -1,0 +1,12 @@
+﻿# OS metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE & editors
+.vscode/
+.idea/
+
+# Archives
+*.zip
+*.crx

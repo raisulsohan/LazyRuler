@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Ruler for Browser — dev sandbox</title>
+<!--
+  Loads the overlay outside the extension so it can be poked at with plain
+  file:// or a static server. `chrome.*` is stubbed just enough to boot.
+-->
+<style>
+  body { margin: 0; font: 14px/1.5 system-ui, sans-serif; background: #f6f7f9; color: #1c1f24; }
+  header { padding: 40px 60px 20px; }
+  h1 { margin: 0 0 6px; font-size: 20px; }
+  p { margin: 0; color: #667; }
+  .row { display: flex; gap: 24px; padding: 24px 60px; align-items: flex-start; }
+  .card { background: #fff; border: 1px solid #dde1e6; border-radius: 8px; padding: 16px; }
+  .a { width: 220px; height: 120px; }
+  .b { width: 220px; height: 160px; margin-top: 6px; }  /* deliberately misaligned */
+  .c { width: 460px; height: 90px; }
+  footer { height: 1400px; }
+</style>
+</head>
+<body>
+  <header>
+    <h1>Ruler sandbox</h1>
+    <p>Drag a guide out of the top or left ruler. Hold Alt to measure.</p>
+  </header>
+
+  <div class="row">
+    <div class="card a">Card A</div>
+    <div class="card b">Card B — 6px lower than A on purpose</div>
+  </div>
+  <div class="row">
+    <div class="card c">Card C</div>
+  </div>
+  <footer></footer>
+
+  <script>
+    // --- minimal chrome stub -------------------------------------------------
+    const mem = {};
+    window.chrome = {
+      runtime: {
+        getURL: (p) => '../' + p,
+        onMessage: { addListener() {} }
+      },
+      storage: {
+        local: {
+          get: async (k) => (k in mem ? { [k]: mem[k] } : {}),
+          set: async (obj) => Object.assign(mem, obj),
+          remove: async (k) => { delete mem[k]; }
+        }
+      }
+    };
+  </script>
+  <script src="../src/store.js"></script>
+  <script src="../src/snap.js"></script>
+  <script src="../src/overlay.js"></script>
+  <script>
+    window.overlay = new window.__RFB.RulerOverlay(() => {
+      window.overlay.destroy();
+      window.overlay = null;
+    });
+  </script>
+</body>
+</html>

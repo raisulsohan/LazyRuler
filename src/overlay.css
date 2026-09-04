@@ -1,0 +1,341 @@
+/* Everything here is scoped to the overlay's shadow root. */
+
+.rfb {
+  --rfb-accent: #00d1ff;
+  --rfb-danger: #ff5a5f;
+  --rfb-snap: #ff3ea5;
+  --rfb-bar: rgba(18, 20, 26, 0.88);
+  --rfb-tick: rgba(226, 240, 255, 0.55);
+  --rfb-text: rgba(226, 240, 255, 0.92);
+  --rfb-size: 22px;
+
+  position: absolute;
+  inset: 0;
+  font: 400 11px/1.35 ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  color: var(--rfb-text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ------------------------------------------------------------- pointer layer */
+
+.rfb-catch {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.rfb--measure .rfb-catch {
+  pointer-events: auto;
+  cursor: crosshair;
+}
+
+.rfb--dragging .rfb-catch {
+  pointer-events: auto;
+  cursor: grabbing;
+}
+
+/* -------------------------------------------------------------------- guides */
+
+.rfb-guides {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.rfb-guides.is-hidden {
+  display: none;
+}
+
+.rfb-guide {
+  position: absolute;
+  pointer-events: auto;
+}
+
+.rfb-guides.is-locked .rfb-guide {
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.rfb-guide--h {
+  left: 0;
+  top: -5px;
+  width: 100%;
+  height: 11px;
+  cursor: ns-resize;
+}
+
+.rfb-guide--v {
+  top: 0;
+  left: -5px;
+  height: 100%;
+  width: 11px;
+  cursor: ew-resize;
+}
+
+.rfb-guide__line {
+  position: absolute;
+  background: var(--rfb-accent);
+}
+
+.rfb-guide--h .rfb-guide__line {
+  left: 0;
+  top: 5px;
+  width: 100%;
+  height: 1px;
+}
+
+.rfb-guide--v .rfb-guide__line {
+  top: 0;
+  left: 5px;
+  height: 100%;
+  width: 1px;
+}
+
+.rfb-guide__label {
+  position: absolute;
+  display: none;
+  padding: 1px 5px;
+  border-radius: 3px;
+  background: var(--rfb-accent);
+  color: #04121a;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.rfb-guide--h .rfb-guide__label {
+  left: calc(var(--rfb-size) + 4px);
+  top: -14px;
+}
+
+.rfb-guide--v .rfb-guide__label {
+  top: calc(var(--rfb-size) + 4px);
+  left: 9px;
+}
+
+.rfb-guide:hover .rfb-guide__label,
+.rfb-guide.is-active .rfb-guide__label {
+  display: block;
+}
+
+.rfb-guide.is-active .rfb-guide__line {
+  box-shadow: 0 0 0 1px rgba(0, 209, 255, 0.35);
+}
+
+.rfb-guide.is-snapped .rfb-guide__line,
+.rfb-guide.is-snapped .rfb-guide__label {
+  background: var(--rfb-snap);
+}
+
+.rfb-guide.is-snapped .rfb-guide__label {
+  color: #fff;
+}
+
+.rfb-guide.is-deleting .rfb-guide__line,
+.rfb-guide.is-deleting .rfb-guide__label {
+  background: var(--rfb-danger);
+  opacity: 0.7;
+}
+
+/* --------------------------------------------------------------- measurement */
+
+.rfb-measure {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.rfb-hoverbox {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  box-sizing: border-box;
+  border: 1px solid var(--rfb-accent);
+  background: rgba(0, 209, 255, 0.08);
+}
+
+.rfb-hoverlabel,
+.rfb-mlabel {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  padding: 2px 6px;
+  border-radius: 3px;
+  background: rgba(18, 20, 26, 0.92);
+  color: var(--rfb-text);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
+}
+
+.rfb-mlabel {
+  border: 1px solid rgba(0, 209, 255, 0.5);
+}
+
+.rfb-msvg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: none;
+  overflow: visible;
+}
+
+.rfb-mline {
+  stroke: var(--rfb-accent);
+  stroke-width: 1;
+}
+
+.rfb-mdash {
+  stroke: rgba(0, 209, 255, 0.45);
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+}
+
+/* -------------------------------------------------------------------- rulers */
+
+.rfb-ruler {
+  position: absolute;
+  z-index: 3;
+  pointer-events: auto;
+}
+
+.rfb-ruler--top {
+  top: 0;
+  left: 0;
+  cursor: ns-resize;
+}
+
+.rfb-ruler--left {
+  top: 0;
+  left: 0;
+  cursor: ew-resize;
+}
+
+.rfb-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: var(--rfb-size);
+  height: var(--rfb-size);
+  background: var(--rfb-bar);
+  border-right: 1px solid var(--rfb-tick);
+  border-bottom: 1px solid var(--rfb-tick);
+  box-sizing: border-box;
+  pointer-events: auto;
+}
+
+/* ----------------------------------------------------------------------- HUD */
+
+.rfb-hud {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: rgba(18, 20, 26, 0.92);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.4);
+  pointer-events: auto;
+  user-select: none;
+}
+
+.rfb-hud__dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--rfb-accent);
+}
+
+.rfb-hud__count {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.rfb-hud__hint {
+  opacity: 0.55;
+}
+
+.rfb-btn {
+  appearance: none;
+  border: 1px solid rgba(226, 240, 255, 0.18);
+  border-radius: 5px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  padding: 2px 7px;
+  cursor: pointer;
+}
+
+.rfb-btn:hover {
+  background: rgba(226, 240, 255, 0.12);
+}
+
+.rfb-btn.is-on {
+  background: var(--rfb-accent);
+  border-color: var(--rfb-accent);
+  color: #04121a;
+  font-weight: 600;
+}
+
+.rfb-btn--close {
+  padding: 2px 6px;
+  opacity: 0.8;
+}
+
+/* --------------------------------------------------------- mode button */
+
+.rfb-btn--mode {
+  font-variant-numeric: tabular-nums;
+  min-width: 42px;
+  text-align: center;
+}
+
+/* ----------------------------------------------------------- push mode */
+
+/* In push mode the overlay host stays fixed; the page body is pushed via
+   inline margins applied by JS.  No extra CSS needed on the overlay itself
+   beyond marking the state for potential future use. */
+
+/* -------------------------------------------------------- auto-hide mode */
+
+.rfb--autohide .rfb-ruler--top {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform: translateY(calc(-1 * var(--rfb-size)));
+  opacity: 0;
+}
+
+.rfb--autohide .rfb-ruler--left {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform: translateX(calc(-1 * var(--rfb-size)));
+  opacity: 0;
+}
+
+.rfb--autohide .rfb-corner {
+  transition: opacity 0.2s ease;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.rfb--autohide.rfb--ruler-visible .rfb-ruler--top {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.rfb--autohide.rfb--ruler-visible .rfb-ruler--left {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.rfb--autohide.rfb--ruler-visible .rfb-corner {
+  opacity: 1;
+  pointer-events: auto;
+}
