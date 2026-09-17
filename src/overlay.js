@@ -141,6 +141,13 @@
       const hint = el('span', 'rfb-hud__hint');
       hint.textContent = 'Alt = measure · Shift = no snap';
 
+      const credit = el('a', 'rfb-hud__credit');
+      credit.href = 'https://raisulsohan.com';
+      credit.target = '_blank';
+      credit.rel = 'noopener';
+      credit.textContent = 'Made by Raisul Sohan';
+      credit.addEventListener('mousedown', (e) => e.stopPropagation());
+
       const mkBtn = (label, title, fn) => {
         const b = el('button', 'rfb-btn');
         b.type = 'button';
@@ -164,7 +171,7 @@
       this.modeBtn = mkBtn('Over', 'Switch display mode: Overlay / Push / Auto-hide', () => this.cycleMode());
       this.modeBtn.classList.add('rfb-btn--mode');
 
-      hud.append(dot, this.hudCount, hint, this.modeBtn, this.lockBtn, this.hideBtn, clearBtn, closeBtn);
+      hud.append(dot, this.hudCount, hint, credit, this.modeBtn, this.lockBtn, this.hideBtn, clearBtn, closeBtn);
       return hud;
     }
 

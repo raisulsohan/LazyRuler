@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Ruler for Browser",
+  "name": "LazyRuler",
   "version": "1.0.0",
   "description": "Photoshop-style rulers, draggable guides and on-page measurement for any web page.",
   "author": "Raisul Sohan",

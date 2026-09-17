@@ -1,4 +1,4 @@
-# Ruler for Browser
+# LazyRuler
 
 Photoshop-style rulers, guides and measurement on top of any web page.
 
@@ -66,14 +66,13 @@ PRIVACY.md         Chrome Web Store compliant privacy policy
 
 ## Privacy Policy
 
-**Ruler for Browser** operates with a strict privacy-first policy. It does not collect, track, or share any personal data or browsing activity. All guides and preferences are stored strictly on your local browser.
+**LazyRuler** operates with a strict privacy-first policy. It does not collect, track, or share any personal data or browsing activity. All guides and preferences are stored strictly on your local browser.
 
-Read the complete [Privacy Policy](PRIVACY.md) (or on GitHub: [https://github.com/raisulsohan/RulerForBrowser/blob/main/PRIVACY.md](https://github.com/raisulsohan/RulerForBrowser/blob/main/PRIVACY.md)).
+Read the complete [Privacy Policy](PRIVACY.md) (or on GitHub: [https://github.com/raisulsohan/LazyRuler/blob/main/PRIVACY.md](https://github.com/raisulsohan/LazyRuler/blob/main/PRIVACY.md)).
 
 ## Author & Contributor
 
-Developed and maintained solely by:
-- **Raisul Sohan** — [https://raisulsohan.com](https://raisulsohan.com)
+Made by [Raisul Sohan](https://raisulsohan.com)
 
 ## License
 

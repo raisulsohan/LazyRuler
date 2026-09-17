@@ -1,16 +1,16 @@
-﻿# Privacy Policy for Ruler for Browser
+﻿# Privacy Policy for LazyRuler
 
 **Last updated:** September 4, 2026
 
 **Developer:** Raisul Sohan  
 **Website:** [https://raisulsohan.com](https://raisulsohan.com)  
-**Repository:** [https://github.com/raisulsohan/RulerForBrowser](https://github.com/raisulsohan/RulerForBrowser)
+**Repository:** [https://github.com/raisulsohan/LazyRuler](https://github.com/raisulsohan/LazyRuler)
 
 ---
 
 ## 1. Overview
 
-**Ruler for Browser** is an open-source browser extension designed for web designers and developers to measure elements, align layouts, and place draggable guides directly on web pages. 
+**LazyRuler** is an open-source browser extension designed for web designers and developers to measure elements, align layouts, and place draggable guides directly on web pages. 
 
 We strongly respect your privacy. This extension operates with a **strict privacy-first model** and does **not** collect, store, track, transmit, or sell any personal data or browsing activity.
 
@@ -68,3 +68,7 @@ If you have any questions, inquiries, or feedback regarding this Privacy Policy,
 - **Developer:** Raisul Sohan
 - **Website:** [https://raisulsohan.com](https://raisulsohan.com)
 - **GitHub:** [https://github.com/raisulsohan](https://github.com/raisulsohan)
+
+---
+
+Made by [Raisul Sohan](https://raisulsohan.com)

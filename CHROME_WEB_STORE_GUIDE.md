@@ -1,12 +1,12 @@
-﻿# Chrome Web Store Submission Guide for Ruler for Browser
+﻿# Chrome Web Store Submission Guide for LazyRuler
 
-This document contains everything you need to fill out the Chrome Web Store Developer Dashboard when publishing **Ruler for Browser**.
+This document contains everything you need to fill out the Chrome Web Store Developer Dashboard when publishing **LazyRuler**.
 
 ---
 
 ## 1. Extension Details
 
-- **Name:** Ruler for Browser
+- **Name:** LazyRuler
 - **Version:** 1.0.0
 - **Short Description (under 132 characters):**
   > Photoshop-style rulers, draggable guides and on-page measurement for any web page.
@@ -15,7 +15,7 @@ This document contains everything you need to fill out the Chrome Web Store Deve
 
 ### Detailed Description (for Store Listing):
 `markdown
-Ruler for Browser brings Photoshop and Figma style rulers, draggable guides, and instant pixel measurement right into your browser on any web page.
+LazyRuler brings Photoshop and Figma style rulers, draggable guides, and instant pixel measurement right into your browser on any web page.
 
 Perfect for front-end developers, UI/UX designers, and QA engineers who need to verify element alignments, spacing, paddings, and dimensions accurately.
 
@@ -40,7 +40,7 @@ KEYBOARD SHORTCUTS:
 * Shift (while dragging): Disable edge snapping
 * Double-click a guide: Delete the guide
 
-Created with care by Raisul Sohan (https://raisulsohan.com).
+Made by Raisul Sohan (https://raisulsohan.com).
 `
 
 ---
@@ -64,7 +64,7 @@ When submitting, Chrome Web Store requires you to declare why you use each permi
 - Do you collect any personal information? **No**
 - Does the extension transmit data to remote servers? **No**
 - Privacy Policy URL:
-  https://github.com/raisulsohan/RulerForBrowser/blob/main/PRIVACY.md
+  https://github.com/raisulsohan/LazyRuler/blob/main/PRIVACY.md
 
 ---
 
