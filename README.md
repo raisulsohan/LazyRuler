@@ -57,12 +57,20 @@ src/overlay.css    overlay styles, scoped to shadow root
 src/store.js       per-origin guide persistence & mode settings
 src/snap.js        element-edge collection + nearest-edge search
 PRIVACY.md         Chrome Web Store compliant privacy policy
+CHANGELOG.md       version history
+docs/              user guide and developer guide
 ```
 
 ## Known limits
 
 - Runs in the top frame only — guides do not extend into cross-origin iframes.
 - Page zoom is not compensated: at zoom levels other than 100% the ruler reads CSS pixels, not device pixels.
+
+## Documentation
+
+- [User guide](docs/user-guide.md) — every feature, shortcut and display mode, with troubleshooting and known limits.
+- [Developer guide](docs/developer-guide.md) — how the overlay, snapping, measurement and storage work, and how to work on the code.
+- [Changelog](CHANGELOG.md) — what changed in each version.
 
 ## Privacy Policy
 
