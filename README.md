@@ -7,10 +7,11 @@ instantly whether two things line up.
 
 ## Install (unpacked)
 
-1. Open `chrome://extensions` (or `edge://extensions`).
-2. Turn on **Developer mode**.
-3. **Load unpacked** → pick this folder.
-4. Open any page and press **Alt+R**, or click the extension icon.
+1. Download `LazyRuler-v1.0.1.zip` from the [latest release](https://github.com/raisulsohan/LazyRuler/releases/latest) and unzip it, or clone this repository.
+2. Open `chrome://extensions` (or `edge://extensions`).
+3. Turn on **Developer mode**.
+4. **Load unpacked** → pick the LazyRuler folder (the one with `manifest.json`).
+5. Open any page and press **Alt+R**, or click the extension icon.
 
 ## Using it
 

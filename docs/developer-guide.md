@@ -185,9 +185,10 @@ The service worker has its own console: click **service worker** on the extensio
 
 ### Releasing
 
-1. Bump `version` in `manifest.json` and in `CHROME_WEB_STORE_GUIDE.md`.
+1. Bump `version` in `manifest.json` and in `CHROME_WEB_STORE_GUIDE.md`, and update the release file name in `README.md` and `docs/user-guide.md`.
 2. Add the changes to `CHANGELOG.md`.
-3. Zip `manifest.json`, `icons/` and `src/` only (not `dev/`, the docs or `.git`), as described in `CHROME_WEB_STORE_GUIDE.md`.
+3. Build `LazyRuler-vX.Y.Z.zip` with `manifest.json`, `LICENSE`, `icons/` and `src/` at the top level (no wrapping folder; not `dev/`, the docs or `.git`). The Chrome Web Store upload is the same without `LICENSE`, as described in `CHROME_WEB_STORE_GUIDE.md`.
+4. Commit, tag `vX.Y.Z`, push the tag, and create a GitHub release named `LazyRuler vX.Y.Z` with the ZIP attached and the changelog entry as its notes.
 
 ## Permissions
 

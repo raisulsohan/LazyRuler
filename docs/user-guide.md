@@ -21,7 +21,7 @@ LazyRuler draws Photoshop-style rulers along the top and left of any web page, l
 
 LazyRuler is loaded as an unpacked extension. There is no build step.
 
-1. Download the repository as a ZIP and unzip it somewhere permanent, or clone it. The browser loads the files from that folder, so do not move or delete it afterwards.
+1. Download `LazyRuler-v1.0.1.zip` from the [latest release](https://github.com/raisulsohan/LazyRuler/releases/latest) and unzip it somewhere permanent, or clone the repository. The browser loads the files from that folder, so do not move or delete it afterwards.
 2. Open `chrome://extensions` (Edge: `edge://extensions`, Brave: `brave://extensions`).
 3. Turn on **Developer mode** (top right).
 4. Click **Load unpacked** and pick the `LazyRuler` folder, the one that contains `manifest.json`.
