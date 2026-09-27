@@ -2,6 +2,16 @@
 
 All notable changes to LazyRuler are listed here. Version numbers follow the `version` field in `manifest.json`.
 
+## [1.0.1] — 2026-09-27
+
+### Fixed
+
+- Push mode now moves viewport-anchored boxes as well as the page: `position: fixed` elements that touch the top or left ruler strip, and `position: sticky` elements that stick to the viewport, are offset by 22 px, and boxes with an explicit width or height are capped so they still fit. The page is re-checked when it changes (new elements, class or style changes, window resize), and every box gets its own values back when you leave push mode or close the ruler. Before, only in-flow content moved and fixed headers and sidebars stayed under the rulers.
+
+### Added
+
+- Fixed and sticky fixtures in `dev/sandbox.html` for checking push mode.
+
 ## [1.0.0] — 2026-09-04
 
 First release, published as **Ruler for Browser**.

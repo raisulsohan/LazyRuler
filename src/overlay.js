@@ -7,6 +7,8 @@
   const RULER = 22;   // px thickness of each ruler bar
   const SNAP = 6;     // px snap threshold
   const MOVE_SLOP = 2; // px before a mousedown counts as a drag
+  const PUSH_MAX_ELEMENTS = 5000; // elements checked for fixed/sticky boxes in push mode
+  const PUSH_SCAN_DELAY = 300;    // ms between a page change and the next push re-scan
   const SVG_NS = 'http://www.w3.org/2000/svg';
 
   const el = (tag, cls) => {
@@ -53,8 +55,9 @@
       this._rulerVisible = false;
       this._origMarginTop = '';
       this._origMarginLeft = '';
-      this._origPaddingTop = '';
-      this._origPaddingLeft = '';
+      this._pushed = new Map();     // fixed/sticky boxes moved by push mode -> their original inline values
+      this._pushObserver = null;
+      this._pushTimer = 0;
 
       this._build();
       this._bind();
@@ -179,7 +182,11 @@
 
     _bind() {
       this._onScroll = () => this.scheduleDraw();
-      this._onResize = () => this.resize();
+      this._onResize = () => {
+        this.resize();
+        // the viewport-fit caps in push mode depend on the window size
+        if (this.displayMode === 'push') this._schedulePushScan();
+      };
       this._onCursor = (e) => {
         this.cursor.x = e.clientX;
         this.cursor.y = e.clientY;
@@ -388,16 +395,25 @@
 
     _applyPush() {
       const de = document.documentElement;
-      const body = document.body;
 
       // Save original values so we can restore on mode-switch or destroy
       this._origMarginTop = de.style.marginTop || '';
       this._origMarginLeft = de.style.marginLeft || '';
-      this._origPaddingTop = body ? (body.style.paddingTop || '') : '';
-      this._origPaddingLeft = body ? (body.style.paddingLeft || '') : '';
 
       de.style.setProperty('margin-top', `${RULER}px`, 'important');
       de.style.setProperty('margin-left', `${RULER}px`, 'important');
+
+      // The root margin moves in-flow content only. Boxes anchored to the
+      // viewport (position: fixed, and sticky boxes that stick to it) are
+      // offset one by one, and re-checked whenever the page changes.
+      this._pushViewportBoxes();
+      this._pushObserver = new MutationObserver(() => this._schedulePushScan());
+      this._pushObserver.observe(de, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['class', 'style']
+      });
     }
 
     _removePush() {
@@ -417,6 +433,133 @@
 
       this._origMarginTop = '';
       this._origMarginLeft = '';
+
+      if (this._pushObserver) {
+        this._pushObserver.disconnect();
+        this._pushObserver = null;
+      }
+      clearTimeout(this._pushTimer);
+      this._pushTimer = 0;
+
+      for (const [node, rec] of this._pushed) this._unpushBox(node, rec);
+      this._pushed.clear();
+    }
+
+    _schedulePushScan() {
+      if (this._pushTimer) return;
+      this._pushTimer = setTimeout(() => {
+        this._pushTimer = 0;
+        if (this.host && this.displayMode === 'push') this._pushViewportBoxes();
+      }, PUSH_SCAN_DELAY);
+    }
+
+    // A sticky box sticks to its nearest scroll container. Only one whose
+    // ancestors (below <body>, whose overflow belongs to the viewport) are all
+    // non-scrolling can end up under a ruler.
+    _sticksToViewport(node) {
+      for (let p = node.parentElement; p && p !== document.body; p = p.parentElement) {
+        const cs = getComputedStyle(p);
+        if (cs.overflowX !== 'visible' && cs.overflowX !== 'clip') return false;
+        if (cs.overflowY !== 'visible' && cs.overflowY !== 'clip') return false;
+      }
+      return true;
+    }
+
+    _pushViewportBoxes() {
+      const vw = document.documentElement.clientWidth;
+      const vh = document.documentElement.clientHeight;
+      const all = document.body ? document.body.getElementsByTagName('*') : [];
+      const count = Math.min(all.length, PUSH_MAX_ELEMENTS);
+      const live = new Set();
+      // NaN (from 'auto') never qualifies. The upper bound includes RULER so a
+      // box already moved by an earlier scan keeps qualifying.
+      const inRange = (v) => v > -RULER && v <= RULER;
+
+      for (let i = 0; i < count; i++) {
+        const node = all[i];
+        if (node === this.host) continue;
+
+        const cs = getComputedStyle(node);
+        const pos = cs.position;
+        if (pos !== 'fixed' && pos !== 'sticky') continue;
+        const sticky = pos === 'sticky';
+        if (sticky && !this._sticksToViewport(node)) continue;
+
+        // Resolved insets are used values: a fixed box anchored with `bottom`
+        // reports a large `top`, a hidden one (top: -100%) a large negative.
+        const top = parseFloat(cs.top);
+        const left = parseFloat(cs.left);
+        let r = null;
+        if (!sticky) {
+          r = node.getBoundingClientRect();
+          if (r.width <= 0 || r.height <= 0) continue;
+        }
+        // A sticky box is judged by its offsets alone: it may not be stuck
+        // yet, but must carry the new offset for when it is.
+        const wantTop = inRange(top) && (sticky || (r.top <= RULER && r.bottom > 0));
+        const wantLeft = inRange(left) && (sticky || (r.left <= RULER && r.right > 0));
+        if (!wantTop && !wantLeft) continue;
+
+        live.add(node);
+        let rec = this._pushed.get(node);
+        if (!rec) {
+          rec = { props: {} };
+          this._pushed.set(node, rec);
+        }
+        if (wantTop) this._pushProp(node, rec, 'top', `${RULER}px`);
+        if (wantLeft) this._pushProp(node, rec, 'left', `${RULER}px`);
+
+        // A box with `right` / `bottom` set shrinks with the new inset; one
+        // with an explicit width or height would overflow instead, so cap it.
+        if (!sticky) {
+          const after = node.getBoundingClientRect();
+          if (wantLeft && after.right > vw + 1) {
+            this._pushProp(node, rec, 'max-width', `calc(100% - ${RULER}px)`);
+          }
+          if (wantTop && after.bottom > vh + 1) {
+            this._pushProp(node, rec, 'max-height', `calc(100% - ${RULER}px)`);
+          }
+        }
+      }
+
+      // Boxes that stopped qualifying (no longer fixed, moved elsewhere) get
+      // their own values back.
+      for (const [node, rec] of this._pushed) {
+        if (live.has(node)) continue;
+        this._unpushBox(node, rec);
+        this._pushed.delete(node);
+      }
+
+      // Our own style writes are not page changes.
+      if (this._pushObserver) this._pushObserver.takeRecords();
+    }
+
+    _pushProp(node, rec, prop, value) {
+      const cur = rec.props[prop];
+      if (cur) {
+        // the page overwrote our inline value (a script animating `top`,
+        // say): put ours back, but keep the original we recorded
+        if (node.style.getPropertyValue(prop) !== value) {
+          node.style.setProperty(prop, value, 'important');
+        }
+        return;
+      }
+      rec.props[prop] = {
+        value,
+        prev: node.style.getPropertyValue(prop),
+        prio: node.style.getPropertyPriority(prop)
+      };
+      node.style.setProperty(prop, value, 'important');
+    }
+
+    _unpushBox(node, rec) {
+      for (const prop of Object.keys(rec.props)) {
+        const p = rec.props[prop];
+        // only undo what is still ours; a value the page wrote since is kept
+        if (node.style.getPropertyValue(prop) !== p.value) continue;
+        node.style.removeProperty(prop);
+        if (p.prev) node.style.setProperty(prop, p.prev, p.prio);
+      }
     }
 
     _checkAutoHide() {

@@ -34,7 +34,7 @@ instantly whether two things line up.
 | Mode | Behaviour |
 |---|---|
 | **Overlay** (default) | Rulers float on top of the page, exactly as before. |
-| **Push** | The page content is shifted 22 px down and right so nothing is hidden beneath the rulers. |
+| **Push** | The page content is shifted 22 px down and right so nothing is hidden beneath the rulers. Fixed and sticky headers and sidebars are moved out from under the rulers too. |
 | **Auto-hide** | Rulers are hidden until you move your cursor near the top or left edge of the viewport; they slide in smoothly and retract when you move away. |
 
 Your chosen mode is saved globally (all sites share it) and restored on reload.

@@ -1,6 +1,6 @@
 # LazyRuler User Guide
 
-LazyRuler draws Photoshop-style rulers along the top and left of any web page, lets you pull guides out of them, and measures elements and distances in CSS pixels. This guide covers every feature of version 1.0.0.
+LazyRuler draws Photoshop-style rulers along the top and left of any web page, lets you pull guides out of them, and measures elements and distances in CSS pixels. This guide covers every feature of version 1.0.1.
 
 ## Contents
 
@@ -106,7 +106,7 @@ The **Mode** button in the HUD cycles through three modes. The mode is saved glo
 | Button label | Mode | What it does |
 |---|---|---|
 | **Over** | Overlay (default) | The rulers float on top of the page. The 22 px strips along the top and left cover whatever is under them. |
-| **Push** | Push | The page is shifted 22 px down and 22 px right so nothing sits under the rulers. Elements positioned relative to the window (`position: fixed`) do not move. The page returns to normal when you switch mode or close the ruler. |
+| **Push** | Push | The page is shifted 22 px down and 22 px right so nothing sits under the rulers. Boxes anchored to the window, such as fixed headers, fixed sidebars and sticky bars, are moved out from under the rulers as well, and ones with a set width or height are trimmed so they still fit. The page returns to normal when you switch mode or close the ruler. |
 | **Auto** | Auto-hide | The rulers slide out of view. Move the pointer within 30 px of the top or left window edge and they slide in; move away and they retract after 300 ms. They stay visible while you are dragging a guide. Guides, measurement and the HUD keep working while the rulers are hidden. |
 
 ## The HUD
@@ -174,7 +174,7 @@ Not saved: whether guides are hidden or locked. Both reset to visible and unlock
 - Page zoom is not 100%. LazyRuler reads CSS pixels at the current zoom; reset zoom with `Ctrl+0`.
 - You are comparing a document coordinate with a viewport coordinate. Subtract the scroll offset.
 
-**Push mode still hides part of a sticky header.** Elements with `position: fixed` are not moved by Push mode. Use Auto-hide instead.
+**Push mode leaves something under a ruler.** Push mode moves fixed and sticky boxes by changing their top and left offsets. A box placed some other way, for example by a script that sets its position on every frame, can stay put. Auto-hide always works, since it hides the rulers instead.
 
 **I reloaded the extension and the ruler stopped responding.** Reloading the extension at `chrome://extensions` disconnects the overlay from storage. Reload the page and toggle the ruler again. Guides saved before the reload are kept.
 
@@ -184,4 +184,4 @@ Not saved: whether guides are hidden or locked. Both reset to visible and unlock
 - Page zoom is not compensated: at zoom levels other than 100% the ruler reads CSS pixels, not device pixels.
 - Elements inside shadow DOM are seen as their host element, both for snapping and for the measure hover.
 - Snapping considers at most the first 5000 elements of the page.
-- Push mode shifts the page with a margin on the root element, which does not move `position: fixed` elements.
+- Push mode recognises `position: fixed` boxes and `position: sticky` boxes that stick to the window. A box positioned by a script on every frame, or a sticky box inside a scrolling panel, is left as it is.

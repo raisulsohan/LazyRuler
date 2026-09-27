@@ -7,7 +7,7 @@ This document contains everything you need to fill out the Chrome Web Store Deve
 ## 1. Extension Details
 
 - **Name:** LazyRuler
-- **Version:** 1.0.0
+- **Version:** 1.0.1
 - **Short Description (under 132 characters):**
   > Photoshop-style rulers, draggable guides and on-page measurement for any web page.
 - **Category:** Developer Tools (or Productivity)

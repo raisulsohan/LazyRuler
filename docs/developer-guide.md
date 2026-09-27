@@ -121,11 +121,22 @@ A `keydown` with `altKey` turns measure mode on. A `keyup` of Alt, any `keyup` w
 
 `MODE_CYCLE` is `['overlay', 'push', 'autohide']`; `cycleMode()` applies the next one and saves it. `_applyMode(mode)` first tears down the previous mode, then:
 
-- **push**: `_applyPush()` records the root element's inline `margin-top` / `margin-left` and sets both to `22px !important`. `_removePush()` restores them. (The `_origPadding*` fields are recorded but not used.)
+- **push**: `_applyPush()` records the root element's inline `margin-top` / `margin-left`, sets both to `22px !important`, runs `_pushViewportBoxes()` and starts a `MutationObserver` on `<html>` (child list, subtree, and `class` / `style` attributes) that re-runs the scan `PUSH_SCAN_DELAY` (300 ms) after the last change; a window resize re-runs it too. `_removePush()` restores the margins, disconnects the observer and gives every moved box its own values back. See [Push mode and viewport boxes](#push-mode-and-viewport-boxes).
 - **autohide**: adds `.rfb--autohide`. `_checkAutoHide()` runs on every mouse move and toggles `.rfb--ruler-visible` when the pointer is within `EDGE` (30 px) of the top or left edge, or while dragging, with a `HIDE_DELAY` (300 ms) timer before hiding. The slide is a CSS transition on the ruler canvases and the corner.
 - **overlay**: nothing to set up.
 
 `destroy()` removes the push margins if push was active.
+
+### Push mode and viewport boxes
+
+The root margin moves in-flow content only. `_pushViewportBoxes()` walks `document.body.getElementsByTagName('*')` (up to `PUSH_MAX_ELEMENTS`, 5000) and handles two kinds of box:
+
+- `position: fixed`: qualifies for the top edge when its resolved `top` is between −22 and 22 px and its rect touches the top strip (`top <= 22`, `bottom > 0`), and for the left edge likewise with `left`. Zero-size boxes are skipped, so hidden elements are left alone until they appear. Resolved insets are used values, so a box anchored with `bottom` reports a large `top` and is ignored.
+- `position: sticky`: qualifies by its computed `top` / `left` alone (`auto` never qualifies), but only when no ancestor below `<body>` is a scroll container, because a sticky box sticks to its nearest scrolling ancestor, not to the viewport. Rects are not consulted: a sticky bar that is not stuck yet must still get the new offset for when it is.
+
+A qualifying box gets `top: 22px !important` and/or `left: 22px !important` through `_pushProp()`, which records the previous inline value and priority in `this._pushed` the first time and re-applies the value if the page overwrote it. Because the inset changes, a box with `right` or `bottom` set shrinks by itself; a box with an explicit width or height would overflow instead, so if its rect now crosses the viewport edge it also gets `max-width: calc(100% - 22px)` or `max-height: calc(100% - 22px)`.
+
+Boxes that stop qualifying on a later scan (no longer fixed, moved away) are restored at once. `_unpushBox()` removes a property only if the inline value is still the one LazyRuler set, so a value the page wrote in the meantime is kept. The scan ends with `takeRecords()` so its own style writes do not trigger another scan.
 
 ### Persistence
 
@@ -156,7 +167,7 @@ Load the repository folder at `chrome://extensions` with Developer mode on. Afte
 npx serve .
 ```
 
-and then visit `/dev/sandbox.html`. The page contains three deliberately misaligned cards to snap and measure against, and exposes the instance as `window.overlay`.
+and then visit `/dev/sandbox.html`. The page contains three deliberately misaligned cards to snap and measure against, fixed and sticky fixtures for checking push mode (a full-width header, a full-height rail, a transform-centred bar, a bottom-right box and a sticky bar), and exposes the instance as `window.overlay`.
 
 Guides in the sandbox live only for that page load.
 
@@ -169,7 +180,7 @@ The service worker has its own console: click **service worker** on the extensio
 ### Conventions
 
 - The `RFB` / `rfb-` prefix is kept from the original name, *Ruler for Browser*. It is the namespace on `window`, the message prefix and the CSS class prefix.
-- Geometry constants live at the top of `overlay.js`: `RULER` (22 px bar thickness), `SNAP` (6 px), `MOVE_SLOP` (2 px). `--rfb-size` in `overlay.css` must match `RULER`.
+- Geometry constants live at the top of `overlay.js`: `RULER` (22 px bar thickness), `SNAP` (6 px), `MOVE_SLOP` (2 px), `PUSH_MAX_ELEMENTS` (5000) and `PUSH_SCAN_DELAY` (300 ms). `--rfb-size` in `overlay.css` must match `RULER`.
 - Keep the files dependency-free and loadable in the fixed order `store → snap → overlay → content`. `background.js` lists the same order for on-demand injection.
 
 ### Releasing
